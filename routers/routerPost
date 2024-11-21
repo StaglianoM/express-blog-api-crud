@@ -11,4 +11,8 @@ router.get("/:id", postsController.show)
 // destroy
 router.delete("/:id", postsController.destroy)
 
+//post
+router.post("/", postsController.store)
+
+
 module.exports = router;

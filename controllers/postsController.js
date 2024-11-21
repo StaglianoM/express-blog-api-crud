@@ -27,6 +27,24 @@ function store (req, res) {
     res.json(newPost)
 }
 
+ // Update
+ function update (req, res) {
+    const id = parseInt(req.params.id)
+
+    const post = posts.find((element) => element.id === id)
+
+    const { title, slug, content, image, tags } = req.body
+
+    post.title = title
+    post.slug = slug
+    post.content = content
+    post.image = image
+    post.tags = tags
+
+    res.json(post)
+ }
+
+
 
   //Destroy
   function destroy(req, res) {
@@ -53,5 +71,5 @@ function store (req, res) {
 
 
 
-module.exports = {index, show, store, destroy }
+module.exports = {index, show, store, update, destroy }
 

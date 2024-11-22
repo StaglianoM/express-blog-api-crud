@@ -30,8 +30,16 @@ function store (req, res) {
  // Update
  function update (req, res) {
     const id = parseInt(req.params.id)
-
     const post = posts.find((element) => element.id === id)
+
+    if (!post) {
+        res.status(404);
+    
+        return res.json({
+          error: "post non trovato",
+          message: "post non esiste.",
+        });
+      }
 
     const { title, slug, content, image, tags } = req.body
 
@@ -44,7 +52,29 @@ function store (req, res) {
     res.json(post)
  }
 
+ // Patch
+ function modify (req, res) {
+    const id = parseInt(req.params.id);
+    const post = posts.find((post) => post.id === id);
 
+    if (!post) {
+        return res.status(404).json({
+            error: "Post non trovato",
+            message: "Il post con id specificato non esiste.",
+        });
+    }
+
+    const { title, slug, tags } = req.body;
+
+    if (title) post.title = title;
+    if (slug) post.slug = slug;
+    if (tags) post.tags = tags;
+
+    res.json({
+        message: "Post aggiornato con successo.",
+        post,
+    });
+}
 
   //Destroy
   function destroy(req, res) {
@@ -71,5 +101,5 @@ function store (req, res) {
 
 
 
-module.exports = {index, show, store, update, destroy }
+module.exports = { index, show, store, update, modify, destroy }
 

@@ -1,24 +1,32 @@
 const express = require("express");
+const postsController = require("../controllers/postsController");
+const posts = require("../data/posts"); // Array dei post
+
 const router = express.Router();
-const postsController = require("../controllers/postsController.js");
 
-// index
-router.get("/", postsController.index)
+// Middleware per controllare se l'id esiste
+router.param("id", (req, res, next, id) => {
+    const postId = parseInt(id); // Converte l'id in numero
+    const post = posts.find((post) => post.id === postId);
 
-// show
-router.get("/:id", postsController.show)
+    if (!post) {
+        // Risponde con 404 se il post non esiste
+        return res.status(404).json({
+            error: "Post non trovato",
+            message: `Il post con id ${id} non esiste.`,
+        });
+    }
 
-//post
-router.post("/", postsController.store)
+    // Aggiunge il post trovato alla richiesta
+    req.post = post;
+    next();
+});
 
-//update
-router.put("/:id", postsController.update)
-
-// modify
-router.patch("/:id", postsController.modify);
-
-// destroy
-router.delete("/:id", postsController.destroy)
+// Definizione delle rotte
+router.get("/", postsController.index); // Lista di tutti i post
+router.get("/:id", postsController.show); // Mostra un singolo post
+router.patch("/:id", postsController.modify); // Modifica parziale di un post
+router.put("/:id", postsController.update); // Modifica completa di un post
+router.delete("/:id", postsController.destroy); // Elimina un post
 
 module.exports = router;
-

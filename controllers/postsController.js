@@ -12,58 +12,62 @@ function index(req, res) {
 function show(req, res) {
     const id = parseInt(req.params.id);
     const post = posts.find((post) => post.id === id);
-    console.log(`Dettagli ${id}`);
-    if (!posts) {
-        res.status(404)
-        res.json({
-            message: `product not found`
-        })
-        res.json(post)
+
+    console.log(`Dettagli del post con id: ${id}`);
+
+    if (!post) {
+        return res.status(404).json({
+            message: `Post con id ${id} non trovato.`,
+        });
     }
+
+    res.json(post);
 }
 
 
 // Post
 function store(req, res) {
-    const { title, slug, content, image, tags, published = true } = req.body
+    const { title, slug, content, image, tags, published = true } = req.body;
+
     if (!title || !slug || !content || !tags) {
-        res.status(400)
-        return res.json({
-            message: 'Parametri non validi'
-        })
-    }
-    lastIndex++
-    const newPost = { id: lastIndex, title, slug, content, image, tags, published }
-    console.log(newPost)
-    posts.push(newPost)
-    res.json(newPost)
-    res.status(201).json(newPost)
-}
-
-// Update
-function update(req, res) {
-    const id = parseInt(req.params.id)
-    const post = posts.find((element) => element.id === id)
-
-    if (!post) {
-        res.status(404);
-
-        return res.json({
-            error: "post non trovato",
-            message: "post non esiste.",
+        return res.status(400).json({
+            message: 'Parametri non validi',
         });
     }
 
-    const { title, slug, content, image, tags } = req.body
+    lastIndex++;
+    const newPost = { id: lastIndex, title, slug, content, image, tags, published };
+    console.log('Nuovo post creato:', newPost);
 
-    post.title = title
-    post.slug = slug
-    post.content = content
-    post.image = image
-    post.tags = tags
+    posts.push(newPost);
 
-    res.json(post)
+    res.status(201).json(newPost);
 }
+
+
+// Update
+function update(req, res) {
+    const id = parseInt(req.params.id);
+    const post = posts.find((element) => element.id === id);
+
+    if (!post) {
+        return res.status(404).json({
+            error: "Post non trovato",
+            message: "Il post con id specificato non esiste.",
+        });
+    }
+
+    const { title = post.title, slug = post.slug, content = post.content, image = post.image, tags = post.tags } = req.body;
+
+    post.title = title;
+    post.slug = slug;
+    post.content = content;
+    post.image = image;
+    post.tags = tags;
+
+    res.json(post);
+}
+
 
 // Patch
 function modify(req, res) {
@@ -77,14 +81,17 @@ function modify(req, res) {
         });
     }
 
-    const { title, slug, tags } = req.body;
+    const { title, slug, content, image, tags, published } = req.body;
 
     if (title) post.title = title;
     if (slug) post.slug = slug;
+    if (content) post.content = content;
+    if (image) post.image = image;
     if (tags) post.tags = tags;
+    if (published !== undefined) post.published = published;
 
     res.json({
-        message: "Post aggiornato con successo.",
+        message: "Post aggiornato parzialmente con successo.",
         post,
     });
 }
@@ -94,21 +101,24 @@ function destroy(req, res) {
     const id = parseInt(req.params.id);
     console.log(`Elimino il post con id: ${id}`);
 
-    // Trova l'indice del post da eliminare
     const postsIndex = posts.findIndex((post) => post.id === id);
 
-    // Se l'indice è -1, il post non è stato trovato
     if (postsIndex === -1) {
         console.log(`Post con id ${id} non trovato.`);
         return res.status(404).json({
-            error: 'Post not found',
+            error: 'Post non trovato',
             message: 'Il post non è stato trovato.',
         });
     }
 
-    posts.splice(postsIndex, 1);
-    console.log('Lista dei post non eliminati:', (posts));
-    res.sendStatus(204);
+    const removedPost = posts.splice(postsIndex, 1);
+
+    console.log('Lista dei post rimanenti:', posts);
+
+    res.json({
+        message: `Post con id ${id} eliminato con successo.`,
+        removedPost,
+    });
 }
 
 

@@ -1,7 +1,7 @@
 const express = require('express');
-const cors = require('cors')
 const postsRouter = require("./routers/routerPost");
-const checkTime = require("./middlewares/checkTime");
+const cors = require('cors');
+// const checkTime = require("./middlewares/checkTime");
 const errorHandler = require("./middlewares/errorHandler");
 const notFound = require('./middlewares/notFound');
 const app = express();
@@ -9,14 +9,16 @@ const port = 3000;
 
 
 
+const corsOptions = {
+    origin: 'http://localhost:5173',
+};
+app.use(cors(corsOptions));
 
-// Checktime 
-app.use(checkTime);
-
-//abilito cors 
-app.use(cors())
 
 app.use(express.static('public'));
+
+// Checktime 
+// app.use(checkTime);
 
 // Bodyparser JSON
 app.use(express.json());

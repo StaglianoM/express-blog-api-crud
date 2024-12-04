@@ -9,37 +9,50 @@ function index(req, res) {
 }
 
 // Show
-function show (req, res) {
+function show(req, res) {
     const id = parseInt(req.params.id);
     const post = posts.find((post) => post.id === id);
     console.log(`Dettagli ${id}`);
-    res.json(post)
-  }
+    if (!posts) {
+        res.status(404)
+        res.json({
+            message: `product not found`
+        })
+        res.json(post)
+    }
+}
 
 
-  // Post
-function store (req, res) {
-    const { title, slug, content, image, tags } = req.body
+// Post
+function store(req, res) {
+    const { title, slug, content, image, tags, published = true } = req.body
+    if (!title || !slug || !content || !tags) {
+        res.status(400)
+        return res.json({
+            message: 'Parametri non validi'
+        })
+    }
     lastIndex++
-    const newPost = { id: lastIndex, title, slug, content, image, tags }
+    const newPost = { id: lastIndex, title, slug, content, image, tags, published }
     console.log(newPost)
     posts.push(newPost)
     res.json(newPost)
+    res.status(201).json(newPost)
 }
 
- // Update
- function update (req, res) {
+// Update
+function update(req, res) {
     const id = parseInt(req.params.id)
     const post = posts.find((element) => element.id === id)
 
     if (!post) {
         res.status(404);
-    
+
         return res.json({
-          error: "post non trovato",
-          message: "post non esiste.",
+            error: "post non trovato",
+            message: "post non esiste.",
         });
-      }
+    }
 
     const { title, slug, content, image, tags } = req.body
 
@@ -50,10 +63,10 @@ function store (req, res) {
     post.tags = tags
 
     res.json(post)
- }
+}
 
- // Patch
- function modify (req, res) {
+// Patch
+function modify(req, res) {
     const id = parseInt(req.params.id);
     const post = posts.find((post) => post.id === id);
 
@@ -76,9 +89,9 @@ function store (req, res) {
     });
 }
 
-  //Destroy
-  function destroy(req, res) {
-    const id = parseInt(req.params.id); 
+//Destroy
+function destroy(req, res) {
+    const id = parseInt(req.params.id);
     console.log(`Elimino il post con id: ${id}`);
 
     // Trova l'indice del post da eliminare

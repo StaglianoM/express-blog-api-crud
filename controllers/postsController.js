@@ -5,7 +5,8 @@ let lastIndex = posts.at(-1).id
 // Index
 function index(req, res) {
     console.log('Lista dei post');
-    res.json(posts)
+    const publishedPosts = posts.filter(post => post.published);
+    res.json(publishedPosts);
 }
 
 // Show

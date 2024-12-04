@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const postsRouter = require("./routers/routerPost");
 const checkTime = require("./middlewares/checkTime");
 const errorHandler = require("./middlewares/errorHandler");
@@ -6,8 +7,14 @@ const notFound = require('./middlewares/notFound');
 const app = express();
 const port = 3000;
 
+
+
+
 // Checktime 
 app.use(checkTime);
+
+//abilito cors 
+app.use(cors())
 
 app.use(express.static('public'));
 

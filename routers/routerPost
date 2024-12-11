@@ -24,6 +24,7 @@ router.param("id", (req, res, next, id) => {
 
 // Definizione delle rotte
 router.get("/", postsController.index); // Lista di tutti i post
+router.post("/", postsController.store); // Crea un nuovo post
 router.get("/:id", postsController.show); // Mostra un singolo post
 router.patch("/:id", postsController.modify); // Modifica parziale di un post
 router.put("/:id", postsController.update); // Modifica completa di un post

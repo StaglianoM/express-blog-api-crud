@@ -30,14 +30,31 @@ function show(req, res) {
 function store(req, res) {
     const { title, slug, content, image, tags, published = true } = req.body;
 
+    // Valido i campi obbligatori
     if (!title || !slug || !content || !tags) {
         return res.status(400).json({
             message: 'Parametri non validi',
         });
     }
 
+    // Valido l'URL dell'iimmagine
+    if (!image || typeof image !== 'string') {
+        return res.status(400).json({
+            message: 'URL immagine non valido o mancante',
+        });
+    }
+
+    // Se l'URL dell'immagine non inizia con http://, https://, lo faccio partire da una stringa vuota ecc
+    if (!image.startsWith('http://') && !image.startsWith('https://')) {
+        return res.status(400).json({
+            message: 'L\'URL dell\'immagine deve essere completo (iniziare con http:// o https://).',
+        });
+    }
+
+    // Creazione del nuovo post
     lastIndex++;
     const newPost = { id: lastIndex, title, slug, content, image, tags, published };
+
     console.log('Nuovo post creato:', newPost);
 
     posts.push(newPost);
